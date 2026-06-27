@@ -1,6 +1,6 @@
 # 05 — Playback controls
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -17,11 +17,11 @@ Give the reader control over a running **session**. These are shell concerns (ti
 
 ## Acceptance criteria
 
-- [ ] Reader can pause and resume; resuming continues from the chunk where it paused
-- [ ] Reader can restart the current text from the beginning without re-pasting
-- [ ] A progress indicator shows roughly how far through the text the reader is
-- [ ] Spacebar toggles play/pause
-- [ ] Controls behave sensibly at session boundaries (before start, after final chunk)
+- [x] Reader can pause and resume; resuming continues from the chunk where it paused
+- [x] Reader can restart the current text from the beginning without re-pasting
+- [x] A progress indicator shows roughly how far through the text the reader is
+- [x] Spacebar toggles play/pause
+- [x] Controls behave sensibly at session boundaries (before start, after final chunk)
 
 ## Blocked by
 

@@ -126,6 +126,7 @@ button:active { background: #3a3a3a; }
   transition: width .1s linear;
   width: 0%;
 }
+#progress-text { font-size: .8rem; color: #555; letter-spacing: .03em; }
 
 .reader-controls { display: flex; gap: .5rem; }
 </style>
@@ -149,7 +150,10 @@ button:active { background: #3a3a3a; }
     <span id="pre-orp"></span><span id="orp-char"></span><span id="post-orp"></span>
   </div>
   <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  <div id="progress-text"></div>
   <div class="reader-controls">
+    <button id="pause-btn">Pause</button>
+    <button id="restart-btn">Restart</button>
     <button id="stop-btn">Stop</button>
   </div>
 </div>
@@ -157,18 +161,21 @@ button:active { background: #3a3a3a; }
 <script type="module">
 import { buildSession } from './engine.js';
 
-const textInput  = document.getElementById('text-input');
-const playBtn    = document.getElementById('play-btn');
-const stopBtn    = document.getElementById('stop-btn');
-const inputPanel = document.getElementById('input-panel');
-const reader     = document.getElementById('reader');
-const preOrp     = document.getElementById('pre-orp');
-const orpChar    = document.getElementById('orp-char');
-const postOrp    = document.getElementById('post-orp');
-const progressBar = document.getElementById('progress-bar');
-const statusMsg  = document.getElementById('status-msg');
-const wpmInput   = document.getElementById('wpm-input');
-const chunkInput = document.getElementById('chunk-input');
+const textInput    = document.getElementById('text-input');
+const playBtn      = document.getElementById('play-btn');
+const pauseBtn     = document.getElementById('pause-btn');
+const restartBtn   = document.getElementById('restart-btn');
+const stopBtn      = document.getElementById('stop-btn');
+const inputPanel   = document.getElementById('input-panel');
+const reader       = document.getElementById('reader');
+const preOrp       = document.getElementById('pre-orp');
+const orpChar      = document.getElementById('orp-char');
+const postOrp      = document.getElementById('post-orp');
+const progressBar  = document.getElementById('progress-bar');
+const progressText = document.getElementById('progress-text');
+const statusMsg    = document.getElementById('status-msg');
+const wpmInput     = document.getElementById('wpm-input');
+const chunkInput   = document.getElementById('chunk-input');
 
 function readSettings() {
   return {
@@ -181,6 +188,7 @@ function readSettings() {
 let session = null;
 let timer   = null;
 let index   = 0;
+let paused  = false;
 
 function renderChunk(chunk, i, total) {
   const { text, orpIndex } = chunk;
@@ -188,6 +196,7 @@ function renderChunk(chunk, i, total) {
   orpChar.textContent = text[orpIndex] ?? '';
   postOrp.textContent = text.slice(orpIndex + 1);
   progressBar.style.width = `${((i + 1) / total) * 100}%`;
+  progressText.textContent = `${i + 1} / ${total}`;
 }
 
 function advance() {
@@ -202,6 +211,27 @@ function advance() {
   timer = setTimeout(advance, delay);
 }
 
+function pausePlayback() {
+  clearTimeout(timer);
+  timer = null;
+  paused = true;
+  // step back so resume re-displays the chunk currently on screen
+  if (index > 0) index--;
+  pauseBtn.textContent = 'Resume';
+}
+
+function resumePlayback() {
+  paused = false;
+  pauseBtn.textContent = 'Pause';
+  advance();
+}
+
+function togglePause() {
+  if (!session) return;
+  if (paused) resumePlayback();
+  else pausePlayback();
+}
+
 function startPlayback() {
   const raw = textInput.value;
   session = buildSession(raw, readSettings());
@@ -212,22 +242,47 @@ function startPlayback() {
   }
   statusMsg.textContent = '';
   index = 0;
+  paused = false;
+  pauseBtn.textContent = 'Pause';
 
   inputPanel.style.display = 'none';
   reader.classList.add('active');
   advance();
 }
 
+function restartPlayback() {
+  if (!session) return;
+  clearTimeout(timer);
+  timer = null;
+  index = 0;
+  paused = false;
+  pauseBtn.textContent = 'Pause';
+  advance();
+}
+
 function endPlayback() {
   clearTimeout(timer);
   timer = null;
+  paused = false;
+  session = null;
+  pauseBtn.textContent = 'Pause';
   reader.classList.remove('active');
   inputPanel.style.display = '';
   progressBar.style.width = '0%';
+  progressText.textContent = '';
 }
 
 playBtn.addEventListener('click', startPlayback);
+pauseBtn.addEventListener('click', togglePause);
+restartBtn.addEventListener('click', restartPlayback);
 stopBtn.addEventListener('click', endPlayback);
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && reader.classList.contains('active')) {
+    e.preventDefault();
+    togglePause();
+  }
+});
 </script>
 </body>
 </html>
