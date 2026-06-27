@@ -1,0 +1,12 @@
+# Ralph loop runtime state
+.ralph/
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store

@@ -1,0 +1,3 @@
+# No progress tracking — settings persistence only
+
+Although spreeder is a reading *trainer*, it deliberately does not record sessions, measure WPM over time, or show progress charts. It only persists the last-used settings (WPM, chunk size, adaptive toggle) in `localStorage`. The training effect comes from regular use, not from the app measuring the user. This keeps it a frictionless tool rather than a dashboard/coach that nags. A future reader expecting a "trainer" to log progress should know the omission is intentional — a session log can be added later from the same flow without changing this baseline.
