@@ -1,6 +1,6 @@
 # 06 — Adaptive pacing
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -15,10 +15,10 @@ An optional adaptive pacing mode that gives heavier chunks a little more time at
 
 ## Acceptance criteria
 
-- [ ] With adaptive on, heavier chunks (long words / sentence-ending punctuation) display longer than lighter chunks at the same WPM
-- [ ] With adaptive off, duration depends only on WPM and word count (no per-chunk weighting)
-- [ ] Toggle defaults to off
-- [ ] Unit tests show adaptive-on lengthens a heavier chunk relative to a lighter one at the same WPM, and adaptive-off does not
+- [x] With adaptive on, heavier chunks (long words / sentence-ending punctuation) display longer than lighter chunks at the same WPM
+- [x] With adaptive off, duration depends only on WPM and word count (no per-chunk weighting)
+- [x] Toggle defaults to off
+- [x] Unit tests show adaptive-on lengthens a heavier chunk relative to a lighter one at the same WPM, and adaptive-off does not
 
 ## Blocked by
 

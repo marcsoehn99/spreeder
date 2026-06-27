@@ -182,3 +182,31 @@ test('empty input after normalization produces no chunks', () => {
   const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
   assert.strictEqual(chunks.length, 0);
 });
+
+// Adaptive pacing tests (issue 06)
+test('adaptive on: long-word chunk displays longer than short-word chunk at same WPM', () => {
+  const { chunks: short, chunkDurationMs: ds } = buildSession('a', { wpm: 300, chunkSize: 1, adaptive: true });
+  const { chunks: long, chunkDurationMs: dl } = buildSession('extraordinary', { wpm: 300, chunkSize: 1, adaptive: true });
+  // "extraordinary" has avgCharLen 13, so scale = 1 + (13-5)*0.05 = 1.4 → 280ms
+  // "a" has avgCharLen 1, scale = 1 → 200ms
+  assert.ok(dl(long[0]) > ds(short[0]), 'long word should display longer than short word with adaptive on');
+});
+
+test('adaptive on: sentence-ending punctuation adds extra display time', () => {
+  const { chunks: plain, chunkDurationMs: dp } = buildSession('hello', { wpm: 300, chunkSize: 1, adaptive: true });
+  const { chunks: sentence, chunkDurationMs: ds } = buildSession('hello.', { wpm: 300, chunkSize: 1, adaptive: true });
+  // "hello." has hasSentenceEnd=true → scale += 0.2 extra
+  assert.ok(ds(sentence[0]) > dp(plain[0]), 'sentence-ending chunk should display longer with adaptive on');
+});
+
+test('adaptive off: long word and short word have same duration at same WPM', () => {
+  const { chunks: short, chunkDurationMs: ds } = buildSession('a', { wpm: 300, chunkSize: 1, adaptive: false });
+  const { chunks: long, chunkDurationMs: dl } = buildSession('extraordinary', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(dl(long[0]), ds(short[0]), 'adaptive off: word shape must not affect duration');
+});
+
+test('adaptive off: sentence-ending punctuation does not add extra display time', () => {
+  const { chunks: plain, chunkDurationMs: dp } = buildSession('hello', { wpm: 300, chunkSize: 1, adaptive: false });
+  const { chunks: sentence, chunkDurationMs: ds } = buildSession('hello.', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(ds(sentence[0]), dp(plain[0]), 'adaptive off: sentence end must not affect duration');
+});

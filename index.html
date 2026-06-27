@@ -140,6 +140,7 @@ button:active { background: #3a3a3a; }
     <button id="play-btn">Play</button>
     <label>WPM <input type="number" id="wpm-input" min="60" max="1500" step="50" value="300"></label>
     <label>Chunk <input type="number" id="chunk-input" min="1" max="10" step="1" value="1"></label>
+    <label><input type="checkbox" id="adaptive-toggle"> Adaptive</label>
     <span id="status-msg"></span>
   </div>
 </div>
@@ -174,14 +175,15 @@ const postOrp      = document.getElementById('post-orp');
 const progressBar  = document.getElementById('progress-bar');
 const progressText = document.getElementById('progress-text');
 const statusMsg    = document.getElementById('status-msg');
-const wpmInput     = document.getElementById('wpm-input');
-const chunkInput   = document.getElementById('chunk-input');
+const wpmInput        = document.getElementById('wpm-input');
+const chunkInput      = document.getElementById('chunk-input');
+const adaptiveToggle  = document.getElementById('adaptive-toggle');
 
 function readSettings() {
   return {
     wpm: Math.max(60, parseInt(wpmInput.value, 10) || 300),
     chunkSize: Math.max(1, parseInt(chunkInput.value, 10) || 1),
-    adaptive: false,
+    adaptive: adaptiveToggle.checked,
   };
 }
 
