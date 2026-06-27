@@ -63,3 +63,49 @@ test('buildSession with chunkSize=3 preserves order and short final chunk', () =
   const { chunks } = buildSession('one two three four five six seven', { wpm: 300, chunkSize: 3, adaptive: false });
   assert.deepEqual(chunks.map(c => c.text), ['one two three', 'four five six', 'seven']);
 });
+
+// ORP focal-point tests (issue 03)
+test('orpIndex for single-character chunk is 0', () => {
+  const { chunks } = buildSession('a', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 0);
+});
+
+test('orpIndex for 2-char chunk is 1', () => {
+  const { chunks } = buildSession('hi', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 1);
+});
+
+test('orpIndex for 3-char chunk is 1', () => {
+  const { chunks } = buildSession('the', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 1);
+});
+
+test('orpIndex for 5-char chunk is 1', () => {
+  const { chunks } = buildSession('hello', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 1);
+});
+
+test('orpIndex for 6-char chunk is 2', () => {
+  const { chunks } = buildSession('speaks', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 2);
+});
+
+test('orpIndex for 9-char chunk is 2', () => {
+  const { chunks } = buildSession('something', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 2);
+});
+
+test('orpIndex for 13-char chunk is 3', () => {
+  const { chunks } = buildSession('extraordinary', { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks[0].orpIndex, 3);
+});
+
+test('orpIndex is always within chunk bounds for varied lengths', () => {
+  const words = ['a', 'hi', 'the', 'hello', 'speaks', 'something', 'persistence', 'extraordinary'];
+  for (const word of words) {
+    const { chunks } = buildSession(word, { wpm: 300, chunkSize: 1, adaptive: false });
+    const { orpIndex, text } = chunks[0];
+    assert.ok(orpIndex >= 0, `orpIndex must be >= 0 for "${word}"`);
+    assert.ok(orpIndex < text.length, `orpIndex must be < length for "${word}" (got ${orpIndex})`);
+  }
+});

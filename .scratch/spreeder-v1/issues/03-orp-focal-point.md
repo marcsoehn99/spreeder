@@ -1,6 +1,6 @@
 # 03 — ORP focal point
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -15,11 +15,11 @@ Give each chunk a stable focal point: the **ORP** (Optimal Recognition Point) ch
 
 ## Acceptance criteria
 
-- [ ] Each chunk shows exactly one red ORP character
-- [ ] The ORP character stays at the same horizontal position across chunks of differing length
-- [ ] `orpIndex` is deterministic and always within the chunk's bounds
-- [ ] Unit tests cover `orpIndex` for varying lengths including 1-character and single-word chunks
-- [ ] No eye movement required to track the focal point during playback (verified by opening the file)
+- [x] Each chunk shows exactly one red ORP character
+- [x] The ORP character stays at the same horizontal position across chunks of differing length
+- [x] `orpIndex` is deterministic and always within the chunk's bounds
+- [x] Unit tests cover `orpIndex` for varying lengths including 1-character and single-word chunks
+- [x] No eye movement required to track the focal point during playback (verified by opening the file)
 
 ## Blocked by
 

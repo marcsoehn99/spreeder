@@ -1,6 +1,11 @@
-// ORP index: roughly 1/3 from start — deterministic RSVP pivot, refined in issue 03
+// Spritz-style ORP: slightly left of centre, stepped by word length
 function computeOrpIndex(text) {
-  return Math.floor((text.length - 1) / 3);
+  const len = text.length;
+  if (len <= 1) return 0;
+  if (len <= 5) return 1;
+  if (len <= 9) return 2;
+  if (len <= 13) return 3;
+  return Math.min(Math.floor(len * 0.3), len - 1);
 }
 
 /**
