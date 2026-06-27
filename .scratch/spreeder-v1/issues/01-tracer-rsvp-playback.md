@@ -1,6 +1,6 @@
 # 01 — Tracer bullet: paste → RSVP playback
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -21,14 +21,14 @@ This is a deliberate refinement of ADR-0001 (single file → `index.html` + `eng
 
 ## Acceptance criteria
 
-- [ ] `index.html` opens by double-click with no server and no network, fully offline
-- [ ] Pasting text and pressing play shows the text chunk-by-chunk at a fixed focal position
-- [ ] Playback advances automatically on a timer and stops cleanly after the final chunk
-- [ ] A new text can be pasted and played without reloading the page
-- [ ] `engine.js` is a pure module with no DOM/timer/storage references
-- [ ] `buildSession` returns the documented shape (`chunks` with `text`/`orpIndex`, plus `chunkDurationMs`)
-- [ ] Test runner is configured; a unit test imports `engine.js` in Node and asserts chunking of a sample string
-- [ ] ADR-0001 updated to reflect the `index.html` + `engine.js` shape
+- [x] `index.html` opens by double-click with no server and no network, fully offline
+- [x] Pasting text and pressing play shows the text chunk-by-chunk at a fixed focal position
+- [x] Playback advances automatically on a timer and stops cleanly after the final chunk
+- [x] A new text can be pasted and played without reloading the page
+- [x] `engine.js` is a pure module with no DOM/timer/storage references
+- [x] `buildSession` returns the documented shape (`chunks` with `text`/`orpIndex`, plus `chunkDurationMs`)
+- [x] Test runner is configured; a unit test imports `engine.js` in Node and asserts chunking of a sample string
+- [x] ADR-0001 updated to reflect the `index.html` + `engine.js` shape
 
 ## Blocked by
 
