@@ -109,3 +109,76 @@ test('orpIndex is always within chunk bounds for varied lengths', () => {
     assert.ok(orpIndex < text.length, `orpIndex must be < length for "${word}" (got ${orpIndex})`);
   }
 });
+
+// Input normalization tests (issue 04)
+test('normalization removes fenced code blocks entirely', () => {
+  const input = 'before\n```js\nconsole.log("hello");\n```\nafter';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(!texts.some(t => t.includes('console')), 'code block content must be removed');
+  assert.ok(!texts.some(t => t.includes('```')), 'fences must be removed');
+  assert.deepEqual(texts, ['before', 'after']);
+});
+
+test('normalization removes fenced code block with no language tag', () => {
+  const input = 'text before\n```\nsome code here\n```\ntext after';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(!texts.some(t => t.includes('some')), 'code block content must be removed');
+  assert.deepEqual(texts, ['text', 'before', 'text', 'after']);
+});
+
+test('normalization strips heading markers', () => {
+  const input = '# Title\n## Subtitle\nParagraph text';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(!texts.some(t => t.startsWith('#')), 'hash markers must be stripped');
+  assert.ok(texts.includes('Title'), 'heading text must be preserved');
+  assert.ok(texts.includes('Subtitle'), 'subheading text must be preserved');
+});
+
+test('normalization strips inline bold/italic markers', () => {
+  const input = 'This is **bold** and *italic* text';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(texts.includes('bold'), 'bold text must be preserved');
+  assert.ok(texts.includes('italic'), 'italic text must be preserved');
+  assert.ok(!texts.some(t => t.includes('**') || t.includes('*')), 'asterisks must be stripped');
+});
+
+test('normalization strips inline backticks', () => {
+  const input = 'Call the `foo` function';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(texts.includes('foo'), 'backtick content must be preserved');
+  assert.ok(!texts.some(t => t.includes('`')), 'backticks must be stripped');
+});
+
+test('normalization strips markdown link brackets', () => {
+  const input = 'See [the docs](https://example.com) for details';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(texts.includes('the'), 'link text must be preserved');
+  assert.ok(!texts.some(t => t.includes('[')), 'link brackets must be stripped');
+  assert.ok(!texts.some(t => t.includes('https')), 'link URLs must be removed');
+});
+
+test('normalization strips leading list markers', () => {
+  const input = '- item one\n- item two\n* item three';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  const texts = chunks.map(c => c.text);
+  assert.ok(texts.includes('one'), 'list content preserved');
+  assert.ok(!texts.some(t => t === '-' || t === '*'), 'bare list markers must be stripped');
+});
+
+test('normalization collapses extra whitespace and blank lines', () => {
+  const input = 'word1\n\n\n\nword2   word3\n\nword4';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.deepEqual(chunks.map(c => c.text), ['word1', 'word2', 'word3', 'word4']);
+});
+
+test('empty input after normalization produces no chunks', () => {
+  const input = '```js\nconsole.log("hi");\n```';
+  const { chunks } = buildSession(input, { wpm: 300, chunkSize: 1, adaptive: false });
+  assert.strictEqual(chunks.length, 0);
+});

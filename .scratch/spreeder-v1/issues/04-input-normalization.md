@@ -1,6 +1,6 @@
 # 04 — Input normalization (ADR-0003)
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -15,11 +15,11 @@ Normalize pasted text — typically agent/LLM output — into a clean prose read
 
 ## Acceptance criteria
 
-- [ ] Fenced code blocks are removed entirely from the reading stream (not flashed word-by-word)
-- [ ] Inline markdown markers are stripped so the stream is clean prose
-- [ ] Extra whitespace and blank lines are collapsed so pacing isn't disrupted by formatting
-- [ ] Empty / whitespace-only input produces no chunks and the shell shows a clear "nothing to read" state, no harmful behavior
-- [ ] Unit tests cover code-block removal, marker stripping, whitespace collapse, and empty-input handling
+- [x] Fenced code blocks are removed entirely from the reading stream (not flashed word-by-word)
+- [x] Inline markdown markers are stripped so the stream is clean prose
+- [x] Extra whitespace and blank lines are collapsed so pacing isn't disrupted by formatting
+- [x] Empty / whitespace-only input produces no chunks and the shell shows a clear "nothing to read" state, no harmful behavior
+- [x] Unit tests cover code-block removal, marker stripping, whitespace collapse, and empty-input handling
 
 ## Blocked by
 

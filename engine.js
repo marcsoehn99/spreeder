@@ -1,3 +1,20 @@
+function normalizeText(raw) {
+  let text = raw;
+  // Remove fenced code blocks entirely (```lang\n...\n```)
+  text = text.replace(/```[^\n]*\n[\s\S]*?```/g, '');
+  // Strip markdown links: [text](url) → text, strip URL entirely
+  text = text.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1');
+  // Strip heading markers at line start
+  text = text.replace(/^#{1,6}\s+/gm, '');
+  // Strip leading list item markers (-, *, + at line start)
+  text = text.replace(/^[-*+]\s+/gm, '');
+  // Strip bold/italic markers (**text** or *text*)
+  text = text.replace(/\*{1,2}([^*\n]+)\*{1,2}/g, '$1');
+  // Strip inline backticks
+  text = text.replace(/`([^`\n]*)`/g, '$1');
+  return text;
+}
+
 // Spritz-style ORP: slightly left of centre, stepped by word length
 function computeOrpIndex(text) {
   const len = text.length;
@@ -24,7 +41,7 @@ function computeOrpIndex(text) {
 export function buildSession(rawText, settings) {
   const { wpm = 300, chunkSize = 1, adaptive = false } = settings || {};
 
-  const words = (rawText || '').trim().split(/\s+/).filter(w => w.length > 0);
+  const words = normalizeText(rawText || '').trim().split(/\s+/).filter(w => w.length > 0);
 
   const chunks = [];
   for (let i = 0; i < words.length; i += chunkSize) {
