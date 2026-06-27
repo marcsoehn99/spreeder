@@ -84,33 +84,45 @@ button:active { background: #3a3a3a; }
 #reader.active { display: flex; }
 
 /*
-  ORP alignment: three-span layout with fixed-width columns.
-  pre-orp is right-aligned, orp-char is the red pivot, post-orp is left-aligned.
-  The ORP character stays at the same horizontal pixel for every chunk.
+  ORP alignment: absolute positioning locks the red ORP character at screen centre.
+  pre-orp extends left, post-orp extends right. Nothing wraps, nothing drifts.
 */
 #chunk-display {
-  display: flex;
-  align-items: baseline;
+  position: relative;
+  width: 100%;
+  height: 3rem;
   font-family: 'Courier New', Courier, monospace;
   font-size: 2.8rem;
   line-height: 1;
   user-select: none;
 }
 #pre-orp {
-  display: inline-block;
-  width: 12ch;
+  position: absolute;
+  right: calc(50% + 0.5ch);   /* right edge touches ORP left edge */
+  top: 0;
   text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(50% - 1ch);
 }
 #orp-char {
-  display: inline-block;
-  width: 1ch;
-  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%); /* dead centre */
   color: #e74c3c;
+  white-space: nowrap;
 }
 #post-orp {
-  display: inline-block;
-  width: 12ch;
+  position: absolute;
+  left: calc(50% + 0.5ch);    /* left edge touches ORP right edge */
+  top: 0;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(50% - 1ch);
 }
 
 #progress-bar-wrap {
@@ -242,6 +254,7 @@ function startPlayback() {
     statusMsg.textContent = 'Nothing to read.';
     return;
   }
+
   statusMsg.textContent = '';
   index = 0;
   paused = false;

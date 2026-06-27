@@ -38,6 +38,17 @@ function computeOrpIndex(text) {
  *   Milliseconds to display chunk. Tracks wpm and word count; scales up for
  *   heavier chunks when adaptive is on.
  */
+export function computeColumnWidths(chunks) {
+  let maxPreLen = 0;
+  let maxPostLen = 0;
+  for (const { text, orpIndex } of chunks) {
+    maxPreLen = Math.max(maxPreLen, orpIndex);
+    maxPostLen = Math.max(maxPostLen, text.length - orpIndex - 1);
+  }
+  // minimum 1ch each so empty columns don't collapse
+  return { maxPreLen: Math.max(maxPreLen, 1), maxPostLen: Math.max(maxPostLen, 1) };
+}
+
 export function buildSession(rawText, settings) {
   const { wpm = 300, chunkSize = 1, adaptive = false } = settings || {};
 
