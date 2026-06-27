@@ -40,7 +40,21 @@ body {
 #text-input:focus { border-color: #555; }
 #text-input::placeholder { color: #555; }
 
-.controls-row { display: flex; gap: .5rem; align-items: center; }
+.controls-row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+
+label { font-size: .9rem; color: #888; display: flex; align-items: center; gap: .35rem; }
+
+input[type="number"] {
+  background: #1a1a1a;
+  color: #d4d4d4;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: .3rem .5rem;
+  font-size: .9rem;
+  width: 5.5rem;
+  outline: none;
+}
+input[type="number"]:focus { border-color: #555; }
 
 button {
   background: #222;
@@ -123,6 +137,8 @@ button:active { background: #3a3a3a; }
   <textarea id="text-input" placeholder="Paste text here…"></textarea>
   <div class="controls-row">
     <button id="play-btn">Play</button>
+    <label>WPM <input type="number" id="wpm-input" min="60" max="1500" step="50" value="300"></label>
+    <label>Chunk <input type="number" id="chunk-input" min="1" max="10" step="1" value="1"></label>
     <span id="status-msg"></span>
   </div>
 </div>
@@ -151,9 +167,16 @@ const orpChar    = document.getElementById('orp-char');
 const postOrp    = document.getElementById('post-orp');
 const progressBar = document.getElementById('progress-bar');
 const statusMsg  = document.getElementById('status-msg');
+const wpmInput   = document.getElementById('wpm-input');
+const chunkInput = document.getElementById('chunk-input');
 
-// Defaults — replaced by settings persistence in a later issue
-const settings = { wpm: 300, chunkSize: 1, adaptive: false };
+function readSettings() {
+  return {
+    wpm: Math.max(60, parseInt(wpmInput.value, 10) || 300),
+    chunkSize: Math.max(1, parseInt(chunkInput.value, 10) || 1),
+    adaptive: false,
+  };
+}
 
 let session = null;
 let timer   = null;
@@ -181,7 +204,7 @@ function advance() {
 
 function startPlayback() {
   const raw = textInput.value;
-  session = buildSession(raw, settings);
+  session = buildSession(raw, readSettings());
 
   if (session.chunks.length === 0) {
     statusMsg.textContent = 'Nothing to read.';

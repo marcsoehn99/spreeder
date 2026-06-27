@@ -50,3 +50,16 @@ test('chunkDurationMs with adaptive off is independent of word shape', () => {
   const { chunks: long, chunkDurationMs: dl } = buildSession('extraordinary', { wpm: 300, chunkSize: 1, adaptive: false });
   assert.strictEqual(ds(short[0]), dl(long[0]), 'same WPM, same word count → same duration');
 });
+
+test('chunkDurationMs scales inversely with WPM', () => {
+  const { chunks: c1, chunkDurationMs: d1 } = buildSession('hello', { wpm: 300, chunkSize: 1, adaptive: false });
+  const { chunks: c2, chunkDurationMs: d2 } = buildSession('hello', { wpm: 600, chunkSize: 1, adaptive: false });
+  // 600 WPM is twice as fast → half the duration
+  assert.strictEqual(d1(c1[0]), 200);
+  assert.strictEqual(d2(c2[0]), 100);
+});
+
+test('buildSession with chunkSize=3 preserves order and short final chunk', () => {
+  const { chunks } = buildSession('one two three four five six seven', { wpm: 300, chunkSize: 3, adaptive: false });
+  assert.deepEqual(chunks.map(c => c.text), ['one two three', 'four five six', 'seven']);
+});
