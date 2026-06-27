@@ -24,6 +24,37 @@ to-issues / review skills plus the issue-tracker + triage conventions.
 
 ---
 
+## 0b. Adapt Ralph to Matt's workflow (after install)
+
+`@th0rgal/ralph-wiggum` is a **generic** loop with its own defaults that do **not** match
+the grill→prd→issues flow. You never edit Ralph's code — you adapt it entirely through
+**flags + the prompt file**. Every overridden default and why:
+
+| Ralph default | Override | Why |
+| --- | --- | --- |
+| `opencode` agent | `--agent claude-code` | you run Claude Code |
+| its own model | `--model sonnet` | Sonnet does the building |
+| `--tasks` mode → `.ralph/ralph-tasks.md` (Ralph's *own* task tracker) | **don't use it** — the prompt points Ralph at Matt's tracker `.scratch/<feature>/issues/` | one source of truth = your issues, not a parallel list |
+| completion phrase `COMPLETE` | `--completion-promise ALL_ISSUES_DONE` | distinct phrase, no accidental match |
+| interactive questions on | `--no-questions` | genuinely unattended |
+| permission prompts | `--allow-all` (already default) | AFK |
+| auto-commit after each iteration | leave **on** | git history is Ralph's memory between fresh sessions |
+
+The real adaptation is the **prompt file** `ralph-prompt.md` — that is what teaches a
+generic loop to speak Matt's workflow. It must tell the agent to:
+
+- pick the lowest-numbered issue with `Status: ready-for-agent` (blockers `done`) from `.scratch/<feature>/issues/`;
+- obey `CLAUDE.md` + the `CONTEXT.md` glossary + `docs/adr/*` + the PRD;
+- build **test-first (RED→GREEN)** at the project's TDD seam;
+- tick the acceptance-criteria checkboxes, set `Status: done`, then commit;
+- **not** review (you run `/review` after) and **not** touch any other issue;
+- emit `ALL_ISSUES_DONE` when no `ready-for-agent` issue remains, or `RALPH_ABORT: <reason>` on a hard blocker.
+
+Only **one** line in `ralph-prompt.md` is project-specific: the **TDD seam**. Everything
+else is reusable verbatim across projects.
+
+---
+
 ## 1. Dayshift — interactive, you drive (Opus)
 
 In the repo, in order:
