@@ -1,6 +1,6 @@
 # 05 — HUD placement over the last active window + draggable, remembered offset
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -16,11 +16,11 @@ Offset persistence uses the same `config.json` store introduced in issue 06.
 
 ## Acceptance criteria
 
-- [ ] On Capture, the HUD is centered over the window that was frontmost when the hotkey fired
-- [ ] If no active-window geometry is available, the HUD falls back to a sensible default (e.g. screen center)
-- [ ] The HUD can be dragged to reposition it
-- [ ] A drag is remembered as an offset relative to the active window and reapplied on subsequent Captures
-- [ ] The remembered offset persists across app restarts
+- [x] On Capture, the HUD is centered over the window that was frontmost when the hotkey fired
+- [x] If no active-window geometry is available, the HUD falls back to a sensible default (e.g. screen center)
+- [x] The HUD can be dragged to reposition it
+- [x] A drag is remembered as an offset relative to the active window and reapplied on subsequent Captures
+- [x] The remembered offset persists across app restarts
 
 ## Blocked by
 

@@ -42,7 +42,7 @@ def _read_clipboard(root: tk.Tk) -> str | None:
 
 
 class HUD:
-    def __init__(self, root: tk.Tk, text: str):
+    def __init__(self, root: tk.Tk, text: str, active_window: tuple | None = None):
         self.root = root
         self._timer_id: str | None = None
         self._chunks: list = []
@@ -50,19 +50,39 @@ class HUD:
         self._paused: bool = False
         self._chunk_duration_ms = None
         self._char_width: int = 0
+        self._ref_cx: int = 0
+        self._ref_cy: int = 0
+        # drag state
+        self._drag_start_x: int = 0
+        self._drag_start_y: int = 0
+        self._win_start_x: int = 0
+        self._win_start_y: int = 0
 
-        self._setup_window()
+        self._setup_window(active_window)
         self._build_ui()
         self.root.after(10, self._init_then_play, text)
 
-    def _setup_window(self) -> None:
+    def _setup_window(self, active_window: tuple | None = None) -> None:
         self.root.overrideredirect(True)
         self.root.attributes('-topmost', True)
         total_h = CANVAS_H + PROGRESS_H
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
-        x = (sw - CANVAS_W) // 2
-        y = (sh - total_h) // 2
+
+        if active_window:
+            ax, ay, aw, ah = active_window
+            self._ref_cx = ax + aw // 2
+            self._ref_cy = ay + ah // 2
+        else:
+            self._ref_cx = sw // 2
+            self._ref_cy = sh // 2
+
+        cfg = cfg_mod.load_config()
+        offset_x = int(cfg.get('panel_offset_x', 0))
+        offset_y = int(cfg.get('panel_offset_y', 0))
+
+        x = self._ref_cx - CANVAS_W // 2 + offset_x
+        y = self._ref_cy - total_h // 2 + offset_y
         self.root.geometry(f'{CANVAS_W}x{total_h}+{x}+{y}')
         self.root.configure(bg=BG)
         self.root.resizable(False, False)
@@ -84,6 +104,9 @@ class HUD:
         self.root.bind('<Escape>', self._on_escape)
         self.root.bind('<r>', self._on_restart)
         self.root.bind('<R>', self._on_restart)
+        self.root.bind('<ButtonPress-1>', self._on_drag_start)
+        self.root.bind('<B1-Motion>', self._on_drag_motion)
+        self.root.bind('<ButtonRelease-1>', self._on_drag_end)
         self.root.focus_force()
 
     def _init_then_play(self, text: str) -> None:
@@ -125,6 +148,30 @@ class HUD:
         self._index = 0
         self._paused = False
         self._advance()
+
+    # --- Drag to reposition ---
+
+    def _on_drag_start(self, event) -> None:
+        self._drag_start_x = event.x_root
+        self._drag_start_y = event.y_root
+        self._win_start_x = self.root.winfo_x()
+        self._win_start_y = self.root.winfo_y()
+
+    def _on_drag_motion(self, event) -> None:
+        dx = event.x_root - self._drag_start_x
+        dy = event.y_root - self._drag_start_y
+        self.root.geometry(f'+{self._win_start_x + dx}+{self._win_start_y + dy}')
+
+    def _on_drag_end(self, event) -> None:
+        total_h = CANVAS_H + PROGRESS_H
+        hud_cx = self.root.winfo_x() + CANVAS_W // 2
+        hud_cy = self.root.winfo_y() + total_h // 2
+        offset_x = hud_cx - self._ref_cx
+        offset_y = hud_cy - self._ref_cy
+        cfg = cfg_mod.load_config()
+        cfg['panel_offset_x'] = offset_x
+        cfg['panel_offset_y'] = offset_y
+        cfg_mod.save_config(cfg)
 
     # --- Timer loop ---
 
@@ -198,6 +245,12 @@ def _setup_nothing_cue(root: tk.Tk) -> None:
 
 
 def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('--active-window', nargs=4, type=int, metavar=('X', 'Y', 'W', 'H'))
+    args, _ = parser.parse_known_args()
+    active_window = tuple(args.active_window) if args.active_window else None
+
     root = tk.Tk()
     root.withdraw()
 
@@ -206,7 +259,7 @@ def main() -> None:
         _setup_nothing_cue(root)
         root.deiconify()
     else:
-        HUD(root, text)
+        HUD(root, text, active_window=active_window)
         root.deiconify()
 
     root.mainloop()

@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 
+import objc
 import rumps
 from AppKit import (
     NSDeviceIndependentModifierFlagsMask,
@@ -19,9 +20,16 @@ from AppKit import (
     NSEventModifierFlagOption,
     NSEventModifierFlagShift,
     NSKeyDownMask,
+    NSWorkspace,
 )
 
 import config as cfg_mod
+
+_CG = ctypes.CDLL('/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics')
+_CG.CGWindowListCopyWindowInfo.restype = ctypes.c_void_p
+_CG.CGWindowListCopyWindowInfo.argtypes = [ctypes.c_uint32, ctypes.c_uint32]
+_kCGWindowListOptionOnScreenOnly = 1
+_kCGWindowListExcludeDesktopElements = 16
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _APP_PY = os.path.join(_HERE, 'app.py')
@@ -186,10 +194,45 @@ class SpreederMenuBar(rumps.App):
             ),
         )
 
+    # ---- Active-window geometry ---------------------------------------------
+
+    def _get_frontmost_window_geometry(self) -> tuple | None:
+        """Return (x, y, w, h) of the frontmost app's first on-screen window."""
+        try:
+            ws = NSWorkspace.sharedWorkspace()
+            frontmost = ws.frontmostApplication()
+            if frontmost is None:
+                return None
+            pid = frontmost.processIdentifier()
+            raw = _CG.CGWindowListCopyWindowInfo(
+                _kCGWindowListOptionOnScreenOnly | _kCGWindowListExcludeDesktopElements,
+                0,
+            )
+            if raw is None:
+                return None
+            windows = objc.objc_object(c_void_p=raw)
+            for win in windows:
+                if win.get('kCGWindowOwnerPID') == pid:
+                    bounds = win.get('kCGWindowBounds')
+                    if bounds:
+                        return (
+                            int(bounds['X']),
+                            int(bounds['Y']),
+                            int(bounds['Width']),
+                            int(bounds['Height']),
+                        )
+        except Exception:
+            pass
+        return None
+
     # ---- Actions -------------------------------------------------------------
 
     def _read_clipboard(self, _) -> None:
-        subprocess.Popen([sys.executable, _HUD_PY])
+        geom = self._get_frontmost_window_geometry()
+        cmd = [sys.executable, _HUD_PY]
+        if geom:
+            cmd += ['--active-window', str(geom[0]), str(geom[1]), str(geom[2]), str(geom[3])]
+        subprocess.Popen(cmd)
 
     def _open_window(self, _) -> None:
         if self._win_proc and self._win_proc.poll() is None:
