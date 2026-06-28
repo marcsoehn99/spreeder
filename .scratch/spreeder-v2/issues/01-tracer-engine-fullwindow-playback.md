@@ -1,6 +1,6 @@
 # 01 — Tracer bullet: `engine.py` port + Full window paste → RSVP playback
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -23,14 +23,14 @@ This is the v2 realization of ADR-0004; ADR-0001 (web version) stays frozen.
 
 ## Acceptance criteria
 
-- [ ] `engine.py` exposes the pure `build_session` contract and has no GUI/timer/clipboard/storage dependencies
-- [ ] Ported v1 engine tests pass under `pytest` (normalization, chunking, ORP, timing incl. adaptive on/off)
-- [ ] Launching the app shows a Full window with a paste field and a play button
-- [ ] Pasting text and pressing play renders RSVP one chunk at a time, advancing on a timer, stopping cleanly after the last chunk
-- [ ] The red ORP character is always present and sits at the same horizontal x across all chunks
-- [ ] Each chunk renders on a single line that never wraps
-- [ ] Empty / whitespace-only paste yields a "nothing to read" state, not a blank player
-- [ ] No browser engine or webview is used anywhere (ADR-0004)
+- [x] `engine.py` exposes the pure `build_session` contract and has no GUI/timer/clipboard/storage dependencies
+- [x] Ported v1 engine tests pass under `pytest` (normalization, chunking, ORP, timing incl. adaptive on/off)
+- [x] Launching the app shows a Full window with a paste field and a play button
+- [x] Pasting text and pressing play renders RSVP one chunk at a time, advancing on a timer, stopping cleanly after the last chunk
+- [x] The red ORP character is always present and sits at the same horizontal x across all chunks
+- [x] Each chunk renders on a single line that never wraps
+- [x] Empty / whitespace-only paste yields a "nothing to read" state, not a blank player
+- [x] No browser engine or webview is used anywhere (ADR-0004)
 
 ## Blocked by
 
