@@ -73,14 +73,3 @@ def build_session(raw_text: str, settings: dict | None = None) -> dict:
         return base * min(scale, 2.0)
 
     return {'chunks': chunks, 'chunk_duration_ms': chunk_duration_ms}
-
-
-def compute_column_widths(chunks: list) -> dict:
-    """Return max pre-ORP and post-ORP lengths for fixed-column layout."""
-    max_pre = 0
-    max_post = 0
-    for chunk in chunks:
-        orp = chunk['orp_index']
-        max_pre = max(max_pre, orp)
-        max_post = max(max_post, len(chunk['text']) - orp - 1)
-    return {'max_pre_len': max(max_pre, 1), 'max_post_len': max(max_post, 1)}

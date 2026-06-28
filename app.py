@@ -110,6 +110,10 @@ class _HotkeyDialog:
         if not key or key not in cfg_mod.KEY_CODES:
             self._preview_var.set('Invalid key')
             return
+        if not (self._ctrl_var.get() or self._cmd_var.get()
+                or self._shift_var.get() or self._option_var.get()):
+            self._preview_var.set('Pick ≥1 modifier')
+            return
         new_cfg = {
             'hotkey_key': key,
             'hotkey_keycode': cfg_mod.KEY_CODES[key],
@@ -293,10 +297,11 @@ class FullWindow:
         }
         result = build_session(raw, settings)
         chunks = result['chunks']
+        self._stop_timer()
         if not chunks:
+            self._chunks = []
             self._show_message('nothing to read')
             return
-        self._stop_timer()
         self._chunks = chunks
         self._chunk_duration_ms = result['chunk_duration_ms']
         self._index = 0
