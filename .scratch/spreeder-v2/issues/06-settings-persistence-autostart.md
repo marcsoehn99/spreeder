@@ -1,6 +1,6 @@
 # 06 — Settings: Full-window controls + `config.json` persistence + defaults + autostart
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -17,12 +17,12 @@ Give the reader real, remembered settings — and the login-autostart choice —
 
 ## Acceptance criteria
 
-- [ ] WPM, chunk size, adaptive, and hotkey are adjustable in the Full window and take effect for subsequent Sessions
-- [ ] All settings persist to `config.json` in Application Support and are restored on relaunch
-- [ ] First run with empty storage applies sensible defaults and is immediately usable
-- [ ] Nothing beyond preferences is persisted — no reading history, session counts, or WPM-over-time (ADR-0002)
-- [ ] First run prompts once for login autostart; the choice is stored and later changeable from the Full window
-- [ ] Autostart is opt-in (not enabled unless chosen)
+- [x] WPM, chunk size, adaptive, and hotkey are adjustable in the Full window and take effect for subsequent Sessions
+- [x] All settings persist to `config.json` in Application Support and are restored on relaunch
+- [x] First run with empty storage applies sensible defaults and is immediately usable
+- [x] Nothing beyond preferences is persisted — no reading history, session counts, or WPM-over-time (ADR-0002)
+- [x] First run prompts once for login autostart; the choice is stored and later changeable from the Full window
+- [x] Autostart is opt-in (not enabled unless chosen)
 
 ## Blocked by
 

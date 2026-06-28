@@ -13,6 +13,7 @@ from tkinter import font as tkfont
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 from engine import build_session
+import config as cfg_mod
 
 FONT_FAMILY = 'Menlo'
 FONT_SIZE = 36
@@ -25,8 +26,6 @@ ORP_COLOR = '#ff3b30'
 PROGRESS_BG = '#333'
 PROGRESS_FG = '#0a84ff'
 ORP_X = 320  # left edge of the ORP character — fixed
-
-DEFAULTS = {'wpm': 300, 'chunk_size': 1, 'adaptive': False}
 
 AUTO_CLOSE_MS = 1000       # hold after last chunk before auto-close
 NOTHING_TO_READ_MS = 1800  # how long the "nothing to read" cue is shown
@@ -90,7 +89,13 @@ class HUD:
     def _init_then_play(self, text: str) -> None:
         f = tkfont.Font(family=FONT_FAMILY, size=FONT_SIZE)
         self._char_width = f.measure('M')
-        result = build_session(text, DEFAULTS)
+        loaded = cfg_mod.load_config()
+        settings = {
+            'wpm': loaded['wpm'],
+            'chunk_size': loaded['chunk_size'],
+            'adaptive': loaded['adaptive'],
+        }
+        result = build_session(text, settings)
         self._chunks = result['chunks']
         self._chunk_duration_ms = result['chunk_duration_ms']
         self._index = 0
