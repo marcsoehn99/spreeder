@@ -11,22 +11,26 @@
 set -euo pipefail
 export PATH="$HOME/.bun/bin:$PATH"
 
-BRANCH="${1:-spreeder-v1}"
+BRANCH="${1:-spreeder-v2}"
 MAX_ITER="${2:-20}"
 
 command -v ralph >/dev/null || { echo "✗ ralph not found — run: bun install -g @th0rgal/ralph-wiggum"; exit 1; }
 [ -f ralph-prompt.md ] || { echo "✗ ralph-prompt.md missing in repo root"; exit 1; }
 
-# 1. Ensure a baseline commit exists — this is the /review fixed point.
-if ! git rev-parse HEAD >/dev/null 2>&1; then
-  echo "• No commits yet — creating baseline on $(git branch --show-current)…"
-  git add -A && git commit -q -m "chore: baseline before nightshift"
+# 1. Switch to the feature's implementation branch (create it from the current HEAD if
+#    needed). This is how a fresh run of v2 lands on spreeder-v2 rather than on the v1
+#    line it branches from.
+current="$(git branch --show-current)"
+if [ -n "$current" ] && [ "$current" != "$BRANCH" ]; then
+  echo "• Switching to implementation branch '$BRANCH' (from '$current')…"
+  git checkout -q -b "$BRANCH" 2>/dev/null || git checkout -q "$BRANCH"
 fi
 
-# 2. Ensure we are on an implementation branch, never directly on main/master.
-current="$(git branch --show-current)"
-if [ "$current" = "main" ] || [ "$current" = "master" ]; then
-  git checkout -q -b "$BRANCH" 2>/dev/null || git checkout -q "$BRANCH"
+# 2. Commit anything pending (PRD, issues, ADRs, this prompt) as the baseline — this is
+#    the /review fixed point, so the loop's diff is pure implementation work.
+if [ -n "$(git status --porcelain)" ]; then
+  echo "• Committing pending planning artifacts as the baseline…"
+  git add -A && git commit -q -m "chore: baseline before nightshift"
 fi
 
 # 3. Launch Ralph in the background (Sonnet, fully AFK), logging to .ralph/ (gitignored).
@@ -49,4 +53,4 @@ echo "   PID:     $!"
 echo "   Branch:  $(git branch --show-current)"
 echo "   Log:     $LOG"
 echo "   Status:  ralph --status     |     Live:  tail -f $LOG"
-echo "   Morgens: /review main"
+echo "   Morgens: /review spreeder-v1   (Basislinie, von der v2 abzweigt)"
