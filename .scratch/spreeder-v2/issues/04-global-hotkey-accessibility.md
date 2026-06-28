@@ -1,6 +1,6 @@
 # 04 — Global hotkey + Accessibility
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -16,11 +16,11 @@ The hotkey value is read from settings (defaulting to ⌃⌘R); making it user-c
 
 ## Acceptance criteria
 
-- [ ] A system-wide global hotkey (default ⌃⌘R) fires a Capture from any focused app
-- [ ] The hotkey path opens the HUD and plays immediately with the current settings
-- [ ] When Accessibility permission is missing, the app surfaces a clear prompt guiding the user to grant it, instead of failing silently
-- [ ] Once granted, the hotkey works without restarting (or the app clearly instructs to restart if required)
-- [ ] No browser engine or webview is used (ADR-0004)
+- [x] A system-wide global hotkey (default ⌃⌘R) fires a Capture from any focused app
+- [x] The hotkey path opens the HUD and plays immediately with the current settings
+- [x] When Accessibility permission is missing, the app surfaces a clear prompt guiding the user to grant it, instead of failing silently
+- [x] Once granted, the hotkey works without restarting (or the app clearly instructs to restart if required)
+- [x] No browser engine or webview is used (ADR-0004)
 
 ## Blocked by
 
