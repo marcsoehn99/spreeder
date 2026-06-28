@@ -1,6 +1,6 @@
 # 02 — Menu-bar resident + lifecycle
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -14,11 +14,11 @@ This establishes the resident process model the hotkey depends on: something is 
 
 ## Acceptance criteria
 
-- [ ] The app runs as a menu-bar / status-bar item with no dock window
-- [ ] Clicking the menu-bar icon opens the Full window (paste + RSVP playback from issue 01)
-- [ ] A Quit action in the menu-bar stops the app cleanly
-- [ ] The app keeps running in the background after the Full window is closed
-- [ ] No browser engine or webview is used (ADR-0004)
+- [x] The app runs as a menu-bar / status-bar item with no dock window
+- [x] Clicking the menu-bar icon opens the Full window (paste + RSVP playback from issue 01)
+- [x] A Quit action in the menu-bar stops the app cleanly
+- [x] The app keeps running in the background after the Full window is closed
+- [x] No browser engine or webview is used (ADR-0004)
 
 ## Blocked by
 
