@@ -17,7 +17,7 @@ import config as cfg_mod
 
 FONT_FAMILY = 'Menlo'
 FONT_SIZE = 36
-CANVAS_W = 700
+CANVAS_W = 1000
 CANVAS_H = 100
 PROGRESS_H = 4
 BG = '#1a1a1a'
@@ -25,7 +25,7 @@ FG = '#e0e0e0'
 ORP_COLOR = '#ff3b30'
 PROGRESS_BG = '#333'
 PROGRESS_FG = '#0a84ff'
-ORP_X = 320  # left edge of the ORP character — fixed
+ORP_X = 460  # left edge of the ORP character — fixed
 
 AUTO_CLOSE_MS = 1000       # hold after last chunk before auto-close
 NOTHING_TO_READ_MS = 1800  # how long the "nothing to read" cue is shown
