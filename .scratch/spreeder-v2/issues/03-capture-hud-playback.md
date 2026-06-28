@@ -1,6 +1,6 @@
 # 03 — Capture → HUD playback (menu-triggered for now)
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -18,14 +18,14 @@ Placement is not yet over the active window (that's issue 05) — center it on s
 
 ## Acceptance criteria
 
-- [ ] A menu-bar item triggers a Capture of the current clipboard
-- [ ] Empty / whitespace-only / non-text clipboard shows a brief "nothing to read" cue and opens no HUD
-- [ ] Valid text plays in a small, borderless, always-on-top, opaque floating HUD, starting immediately
-- [ ] Captured text is normalized identically to pasted text via `engine.py` (ADR-0003)
-- [ ] The red ORP is always present, fixed-x, and chunks render on a single non-wrapping line in the HUD
-- [ ] Spacebar pauses/resumes, Esc closes instantly, R restarts; a thin progress bar reflects position
-- [ ] After the last chunk, the HUD holds briefly then auto-closes
-- [ ] No length cap is imposed on captured text
+- [x] A menu-bar item triggers a Capture of the current clipboard
+- [x] Empty / whitespace-only / non-text clipboard shows a brief "nothing to read" cue and opens no HUD
+- [x] Valid text plays in a small, borderless, always-on-top, opaque floating HUD, starting immediately
+- [x] Captured text is normalized identically to pasted text via `engine.py` (ADR-0003)
+- [x] The red ORP is always present, fixed-x, and chunks render on a single non-wrapping line in the HUD
+- [x] Spacebar pauses/resumes, Esc closes instantly, R restarts; a thin progress bar reflects position
+- [x] After the last chunk, the HUD holds briefly then auto-closes
+- [x] No length cap is imposed on captured text
 
 ## Blocked by
 

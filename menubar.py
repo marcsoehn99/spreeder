@@ -12,17 +12,23 @@ import rumps
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _APP_PY = os.path.join(_HERE, 'app.py')
+_HUD_PY = os.path.join(_HERE, 'hud.py')
 
 
 class SpreederMenuBar(rumps.App):
     def __init__(self):
         super().__init__('📖', quit_button=None)
         self.menu = [
+            rumps.MenuItem('Read clipboard now', callback=self._read_clipboard),
+            None,
             rumps.MenuItem('Open spreeder', callback=self._open_window),
             None,
             rumps.MenuItem('Quit', callback=self._quit),
         ]
         self._win_proc: subprocess.Popen | None = None
+
+    def _read_clipboard(self, _):
+        subprocess.Popen([sys.executable, _HUD_PY])
 
     def _open_window(self, _):
         if self._win_proc and self._win_proc.poll() is None:
